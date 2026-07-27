@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Finding Hidden Gems in the Rome Airbnb Market</title>
+<style>
+  @page {
+    size: A4;
+    margin: 15mm 16mm 15mm 16mm;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    direction: rtl;
+    text-align: right;
+    font-family: "Segoe UI", "Assistant", Arial, sans-serif;
+    color: #1c1c1c;
+    line-height: 1.42;
+    font-size: 10.3pt;
+  }
+  .cover {
+    text-align: center;
+    padding: 38mm 8mm 14mm 8mm;
+    page-break-after: always;
+  }
+  .cover .kicker {
+    color: #0072B2;
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-size: 11pt;
+    margin-bottom: 10mm;
+  }
+  .cover h1 {
+    font-size: 27pt;
+    line-height: 1.35;
+    color: #0b3d4d;
+    margin: 0 0 6mm 0;
+    border: none;
+    padding: 0;
+  }
+  .cover .tagline {
+    font-size: 13pt;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 18mm;
+  }
+  .cover .divider {
+    width: 70mm;
+    height: 3px;
+    background: linear-gradient(90deg, #0072B2, #E69F00, #009E73);
+    margin: 0 auto 16mm auto;
+    border-radius: 2px;
+  }
+  .team-box {
+    display: inline-block;
+    text-align: right;
+    background: #f4f8fa;
+    border: 1px solid #d7e3e8;
+    border-radius: 8px;
+    padding: 6mm 10mm;
+    margin-top: 6mm;
+    min-width: 90mm;
+  }
+  .team-box h3 {
+    margin: 0 0 3mm 0;
+    color: #0072B2;
+    font-size: 11pt;
+  }
+  .team-box ul { margin: 0; padding-inline-start: 5mm; }
+  .team-box li { margin-bottom: 1.5mm; }
+  .cover .draft-note {
+    margin-top: 14mm;
+    font-size: 9pt;
+    color: #999;
+    max-width: 130mm;
+    margin-inline: auto;
+  }
+
+  h2 {
+    color: #0b3d4d;
+    font-size: 14pt;
+    border-bottom: 2px solid #0072B2;
+    padding-bottom: 1.3mm;
+    margin-top: 6mm;
+    margin-bottom: 3mm;
+    page-break-after: avoid;
+  }
+  h2:first-of-type { margin-top: 0; }
+
+  p { margin: 0 0 2mm 0; text-align: justify; }
+  strong { color: #14313a; }
+
+  .field-label {
+    display: block;
+    color: #0072B2;
+    font-weight: 700;
+    font-size: 9.6pt;
+    letter-spacing: 0.3px;
+    margin-bottom: 0.5mm;
+  }
+
+  ul, ol { margin: 0 0 2mm 0; padding-inline-start: 6mm; }
+  li { margin-bottom: 0.6mm; text-align: justify; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 2.5mm 0 3mm 0;
+    font-size: 9pt;
+    page-break-inside: avoid;
+  }
+  th, td {
+    border: 1px solid #cdd8dc;
+    padding: 1.2mm 2mm;
+    text-align: center;
+  }
+  th {
+    background: #0072B2;
+    color: white;
+    font-weight: 600;
+  }
+  tr:nth-child(even) td { background: #f4f8fa; }
+
+  .figure {
+    text-align: center;
+    margin: 3mm 0;
+    page-break-inside: avoid;
+  }
+  .figure img {
+    max-width: 92%;
+    max-height: 78mm;
+    border: 1px solid #d7e3e8;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  code {
+    background: #f0f4f5;
+    border-radius: 3px;
+    padding: 0.5px 4px;
+    font-family: "Consolas", monospace;
+    font-size: 92%;
+    direction: ltr;
+    display: inline-block;
+  }
+
+  em { color: #555; }
+
+  hr { border: none; border-top: 1px solid #d7e3e8; margin: 6mm 0; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="kicker">פרויקט גמר &middot; ניתוח מאגרי מידע</div>
+  <h1>בעקבות הפנינים הנסתרות: זיהוי Hidden Gems בשוק ה-Airbnb ברומא</h1>
+  <div class="divider"></div>
+  <div class="tagline">טיוטת דוח סופי להגשה, בנוי לפי מבנה ההגשה של הקורס (כותרת, צוות, דומיין, נתונים, לכל בעיה - פתרון והערכה, עבודה עתידית, מסקנה). לפני ההגשה: להמיר ל-PDF, לוודא עמידה במגבלת 6 העמודים (לא כולל תמונות), ולשנות את שם הקובץ ל-<code>writeup_group##.pdf</code>.</div>
+  <div class="team-box">
+    <h3>צוות הפרויקט</h3>
+    <ul>
+<li>[שם מלא] — [אימייל] — [ת.ז / מספר סטודנט]</li>
+<li><em>(להוסיף חברות/חברי צוות נוספים בהתאם)</em></li>
+</ul>
+  </div>
+</div>
+
+<div class="content">
+<h2>דומיין</h2>
+<p>לפלטפורמות השכרה קצרת-טווח כמו Airbnb יש בעיית חשיפה: קומץ קטן של נכסים מוכרים ומדורגים היטב מככב בכל חיפוש, בזמן שנכסים מצוינים ובמחיר הוגן פשוט "נעלמים" מהעין. בפרויקט זה בחנו את שוק ה-Airbnb ברומא, איטליה, ושאלנו האם ניתן לזהות באופן אוטומטי, מתוך נתוני נכסים וביקורות ציבוריים, נכסים מוערכים אך לא-מוכרים כאלה — <strong>"Hidden Gems"</strong> — מה מייחד אותם משאר השוק, והאם הם מתחלקים לתתי-סוגים ברורים.</p>
+<h2>נתונים</h2>
+<p>שני קבצי מקור גולמיים (רומא, בסגנון ייצוא Inside Airbnb):</p>
+<table>
+<thead>
+<tr>
+<th>קובץ</th>
+<th>מספר שורות</th>
+<th>גודל</th>
+<th>תיאור</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data/listings.csv</code></td>
+<td>37,583</td>
+<td>7.0MB</td>
+<td>שורה לכל נכס: מיקום, מחיר, סוג חדר, פרטי מארח, כמות ביקורות, זמינות</td>
+</tr>
+<tr>
+<td><code>data/reviews.csv</code></td>
+<td>2,477,671</td>
+<td>801MB</td>
+<td>שורה לכל ביקורת: מזהה נכס, תאריך, שם המבקר/ת, טקסט חופשי</td>
+</tr>
+</tbody>
+</table>
+<p><span class="field-label">ניקוי ובעיות שאותרו:</span><br />
+- <strong>נכסים</strong> (<code>clean_listings.py</code> ← <code>listings_cleaned_2025.csv</code>, 24,026 שורות): הסרת כפילויות לפי <code>id</code>; המרת <code>price</code> ממחרוזת (עם סימני מטבע) למספר נקי <code>price_clean</code> (ו-<code>log_price</code>); הושארו רק נכסים עם מחיר חיובי תקין ועם לפחות ביקורת אחת מ-2025.<br />
+- <strong>ביקורות</strong> (<code>clean_reviews.py</code> ← <code>reviews_cleaned_2025.csv</code>, 621,081 שורות): סינון לביקורות מ-2025 בלבד, נרמול טקסט (הסרת HTML/קישורים/רווחים מיותרים), וסינון לביקורות ש"נראות אנגלית" בעזרת היוריסטיקה פשוטה (יחס אותיות לטיניות + בדיקת מילים נפוצות).<br />
+- <strong>הטיה שגילינו במהלך הפרויקט:</strong> ההיוריסטיקה לזיהוי אנגלית הייתה מקלה מדי — בדיקת שפה אמיתית (<code>langdetect</code>) שהרצנו בהמשך גילתה שכ-<strong>42% מהביקורות "האנגליות" היו בפועל בשפות אחרות</strong> (צרפתית, ספרדית, איטלקית ועוד). את הבעיה תיקנו במסגרת ניתוח ענני המילים (בעיה 4), אך קובץ הבסיס <code>reviews_cleaned_2025.csv</code> עצמו עדיין מכיל את הרעש הזה — כל רכיב שמשתמש בטקסט הביקורות הגולמי צריך סינון שפה משלו (כפי שהוספנו ב-<code>build_wordclouds.py</code>).<br />
+- <strong>בעיית איכות נתונים נוספת:</strong> מספר קטן של שורות בשני קובצי ה-CSV הנקיים פגומות (מקור הבעיה: כמה ביקורות מקוריות הכילו תו מירכאות לא-תקין שבלבל את כותב ה-CSV). התמודדנו עם זה בכל מקום שבו קראנו את הקבצים האלה (parsing סלחני + ולידציה ש-<code>listing_id</code> הוא אכן מספרי לפני שימוש) — משפיע על כ-0.01% מהשורות לכל היותר.<br />
+- <strong>שדות חסרים:</strong> <code>accommodates</code>, <code>amenities_count</code>, <code>bedrooms</code> ו-<code>bathrooms</code> — שקיימים בדרך כלל בייצוא מלא של Inside Airbnb — <strong>אינם קיימים</strong> בדאטהסט הזה בכלל. זה הגביל את שלב ה-clustering (בעיה 3); הרחבה בסעיף הקשיים שם.</p>
+<h2>בעיה 1 — חיזוי "מחיר הוגן" לנכס</h2>
+<p><span class="field-label">השערה:</span> מחירו של נכס מוסבר במידה רבה ע"י מאפיינים נצפים ומבניים (מיקום, נפח/עדכניות ביקורות, התנהגות המארח, זמינות). אם כך, <strong>הפער</strong> בין המחיר בפועל למחיר החזוי ע"י המודל הוא סימן משמעותי לכך שהנכס מתומחר ביתר או בחסר ביחס לנכסים דומים — וזהו הבסיס לזיהוי ה-Hidden Gems בבעיה 2.</p>
+<p><span class="field-label">הפתרון:</span> בקובץ <code>train_decision_tree.py</code> אימנו <code>DecisionTreeRegressor</code> של <code>sklearn</code> (פרמטרים ברירת מחדל, ללא הגבלת עומק — נבחר כי עצי החלטה הם שיטת הלמידה המונחית שנלמדה בקורס ורצינו ליישם אותה) לחיזוי <code>log_price</code> מתוך: <code>minimum_nights</code>, <code>number_of_reviews</code>, <code>reviews_per_month</code>, <code>calculated_host_listings_count</code>, <code>availability_365</code>, <code>review_scores_rating</code>, בתוספת <code>room_type</code> ו-<code>neighbourhood</code> בקידוד one-hot. (גם <code>accommodates</code> נדרש כ-feature אך אינו קיים בנתונים ומולא בקבוע 0, ולכן לא תרם שום מידע בפועל — מצוין כאן לשקיפות.) השתמשנו בפיצול train/test של 80/20 (<code>random_state=42</code>); לאחר מכן המודל חוזה מחדש על כל הדאטהסט, וההפרש <code>price_clean − predicted_price</code> נשמר כעמודת <code>residual</code> בקובץ <code>listings_model_predictions.csv</code> (24,026 שורות) לשימוש בהמשך הפרויקט.</p>
+<p><span class="field-label">קריטריון הערכה:</span> RMSE ו-MAPE בין המחיר בפועל למחיר החזוי, מחושבים <strong>רק על ה-test set</strong> (20%, n=4,806) — זו הערכת ההכללה ההוגנת. לשם השוואה חישבנו גם את המדד הנאיבי על כל הדאטה (<code>compute_metrics.py</code>), כדי להמחיש מלכודת מתודולוגית (ראו למטה).</p>
+<p><span class="field-label">Setup:</span> אותו פיצול 80/20 כמו באימון; המדדים חושבו הן ביחידות מחיר מקוריות (דרך <code>exp(log_price)</code>) והן ביחידות log.</p>
+<p><span class="field-label">תוצאות:</span></p>
+<table>
+<thead>
+<tr>
+<th>מדד</th>
+<th>test set (הוגן)</th>
+<th>כל הדאטה כולל שורות אימון (מטעה)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RMSE (log price)</td>
+<td><strong>0.639</strong> (טעות מכפילה של כ-פי 1.9)</td>
+<td>0.286 (כ-פי 1.33)</td>
+</tr>
+<tr>
+<td>RMSE (מחיר, יורו)</td>
+<td>—</td>
+<td>154.39</td>
+</tr>
+<tr>
+<td>MAE (מחיר, יורו)</td>
+<td>—</td>
+<td>23.87</td>
+</tr>
+<tr>
+<td>MAPE</td>
+<td>—</td>
+<td>11.79%</td>
+</tr>
+<tr>
+<td>חציון APE</td>
+<td>—</td>
+<td><strong>0.00%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><span class="field-label">ויזואליזציה:</span> <code>docs/assets/price_model_actual_vs_predicted.png</code> — מחיר בפועל מול מחיר חזוי (סקאלת log-log) על ה-test set, כאשר 63 ה-Hidden Gems הסופיים מודגשים.</p>
+<div class="figure"><img alt="מחיר בפועל מול מחיר חזוי" src="assets/price_model_actual_vs_predicted.png" /></div>
+<p><span class="field-label">קשיים וממצא מתודולוגי מרכזי:</span> עץ ההחלטה ללא הגבלת עומק <strong>overfit באופן משמעותי</strong>. הערכה על כל הדאטה (שכוללת את 80% השורות שהמודל כבר ראה באימון) נותנת חציון APE של 0% בדיוק — כלומר העץ פשוט שינן את שורות האימון — מה שמסתיר את הטעות האמיתית, שעל ה-test set הרבה יותר גבוהה (RMSE שמתורגם לטעות מכפילה של כ-פי 1.9). זו דוגמה מאלפת בדיוק למלכודת שעליה מזהירות הנחיות הקורס: <strong>תמיד להעריך על נתונים שהמודל לא ראה</strong>. לממצא הזה יש גם השלכה חיובית ישירה על בעיה 2: מכיוון שנכס ששונן באימון מקבל <code>residual ≈ 0</code>, כמעט בלתי אפשרי עבורו לעמוד בקריטריון "זול ב-15% מהחזוי" — וכתוצאה מכך, <strong>כל 63 ה-Hidden Gems שמצאנו בבעיה 2 נמצאים דווקא ב-test set</strong>, כלומר המחיר החזוי שלהם הוא הערכה אמיתית ולא-ממוחזרת. אנחנו מציינים את זה גם כמגבלה של המודל וגם כהרגעה מתודולוגית לגבי בעיה 2.</p>
+<h2>בעיה 2 — זיהוי נכסי "Hidden Gem"</h2>
+<p><span class="field-label">השערה:</span> נכס "חבוי" הוא נכס ש-(א) פחות נחשף/מבוקר ביחס לשוק, (ב) אהוב באמת על ידי מי שכן התארח בו, ו-(ג) מתומחר משמעותית מתחת למה שהיינו מצפים לפי מאפייניו. שילוב של שלושת הסימנים הבלתי-תלויים האלה אמור לחשוף קבוצה קטנה ואמינה של מציאות אמיתיות, במקום להסתמך על סימן רועש בודד.</p>
+<p><span class="field-label">הפתרון — פייפליין בן ארבעה שלבים:</span><br />
+1. <strong>ציון סנטימנט</strong> (<code>compute_sentiment.py</code> ← <code>reviews_cleaned_2025_sentiment.csv</code>, 621,076 ביקורות): ציון compound של VADER (בין 1- ל-1) לכל ביקורת.<br />
+2. <strong>אחוז חיוביות לכל נכס</strong> (<code>compute_positive_rate.py</code> ← <code>listing_positive_rate.csv</code>, 24,936 נכסים): ביקורת נחשבת "חיובית" אם ה-compound שלה ≥ 0.5; <code>positive_rate</code> = אחוז הביקורות החיוביות מתוך סך הביקורות של הנכס.<br />
+3. <strong>דגל "לא-פופולרי"</strong> (<code>compute_hidden_flag.py</code> ← <code>listing_hidden_flag.csv</code>): השוואת כמות ביקורות 2025 של הנכס אל מול <strong>החציון של כלל הנכסים (18 ביקורות)</strong>; <code>is_hidden = 1</code> אם הכמות נמוכה מהחציון.<br />
+4. <strong>שילוב הקריטריונים</strong> (<code>find_hidden_gems.py</code> ← <code>hidden_gems.csv</code>): נכס נחשב Hidden Gem רק אם <strong>כל השלושה</strong> מתקיימים יחד: <code>is_hidden == 1</code>, <code>positive_rate &gt; 0.75</code>, וגם <code>price_clean ≤ predicted_price × 0.85</code> (כלומר זול ב-15% לפחות מהמחיר שחזה המודל מבעיה 1).</p>
+<p><span class="field-label">קריטריון הערכה:</span> מכיוון שאין תיוג "אמת" (ground truth) למושג "Hidden Gem", ההערכה מבוססת על (א) כוח ההבחנה של כל שלב סינון (כמה כל קריטריון מצמצם את הקבוצה, כלומר שהשילוב לא ריק ולא טריוויאלי) ו-(ב) תקפות-פנים איכותנית — קריאה של הפער במחיר ורמת הסנטימנט של הנכסים שהתקבלו כדי לוודא שהם אכן נראים כמו מציאות אמיתיות (מורחב עוד יותר איכותנית בענני המילים של בעיה 4, בהתאם להנחיית הקורס שבדיקה איכותנית/סמנטית היא שיטת הערכה לגיטימית כשאין ground truth).</p>
+<p><span class="field-label">Setup:</span> שלושת קבצי המקור אוחדו (inner join) לפי <code>listing_id</code>, כך שאוכלוסיית ההערכה מוגבלת ל-7,884 הנכסים שמופיעים בשלושתם (נכסים עם מחיר, ביקורות, וגם תחזית מחיר).</p>
+<p><span class="field-label">תוצאות:</span> מתוך 7,884 נכסים שנבדקו: 4,086 (51.8%) מתחת לחציון כמות הביקורות; מתוכם 1,150 (14.6%) גם עם positive_rate מעל 75%; ומתוכם <strong>63 (0.8%)</strong> גם עוברים את רף ההנחה של 15% — רשימת ה-Hidden Gems הסופית.</p>
+<p><span class="field-label">ויזואליזציה:</span> <code>docs/assets/hidden_gem_funnel.png</code> (משפך שלושת שלבי הסינון), וכן הנקודות המודגשות בגרף הפיזור של בעיה 1 (כל 63 הנכסים נמצאים משמעותית מעל קו ה-<code>y=x</code>, כלומר המחיר החזוי גבוה בבירור מהמחיר בפועל).</p>
+<div class="figure"><img alt="משפך זיהוי Hidden Gems" src="assets/hidden_gem_funnel.png" /></div>
+<p><span class="field-label">קשיים:</span> אין ground truth לבדוק מולו precision/recall של ההגדרה — הספים (חציון ביקורות, 0.75 חיוביות, הנחה של 15%) הם בחירות מנומקות ולא ספים שכוילו מול סט מתויג. הקריטריון המבוסס-מחיר יורש את שגיאת המודל מבעיה 1, אם כי הממצא על ה-overfitting שם דווקא מרגיע במקרה הספציפי הזה.</p>
+<h2>בעיה 3 — Clustering: חלוקת ה-Hidden Gems לסוגים</h2>
+<p><span class="field-label">השערה:</span> ה-Hidden Gems אינם קבוצה אחידה — סביר שהם מתחלקים לתתי-סוגים נבדלים (למשל לפי מיקום, או לפי סוג הנכס) שיהיה שימושי לאפיין בנפרד (כמו פיצ'ר "סוגי Hidden Gems" באתר הזמנות).</p>
+<p><span class="field-label">הפתרון:</span> הרצנו K-means (<code>clustering/build_clusters.py</code>) על 63 נכסי ה-Hidden Gems. <strong>הערה חשובה:</strong> משתני ה-clustering שהתבקשו במקור היו <code>latitude</code>, <code>longitude</code>, <code>accommodates</code>, <code>amenities_count</code>; שני האחרונים אינם קיימים בכלל בדאטהסט (ראו סעיף הנתונים), ולכן ה-clustering בוצע <strong>רק לפי <code>latitude</code>/<code>longitude</code></strong> — כך שהתוצאה היא חלוקה גיאוגרפית ולא חלוקה לפי סוג הנכס. לא נמצאו ערכים חסרים בשני השדות האלה (63/63 שלמים); בוצעה סטנדרטיזציה (<code>StandardScaler</code>) לפני ההרצה, כי K-means רגיש לסקאלה.</p>
+<p><span class="field-label">קריטריון הערכה:</span> ציון Silhouette, בשילוב עם <strong>פרשנות</strong> — האם גדלי ה-clusters מאוזנים והאם הם מייצגים תתי-אזורים משמעותיים ונבדלים, ולא רק בידוד של חריג אחד-שניים.</p>
+<p><span class="field-label">Setup:</span> K-means הורץ בנפרד עבור k=3 ו-k=4 (<code>random_state=42</code>, <code>n_init=10</code>), והושוו לפי ציון Silhouette וגם לפי המבנה האיכותני של הקבוצות שהתקבלו (הצלבה מול עמודת <code>neighbourhood</code> של כל נכס).</p>
+<p><span class="field-label">תוצאות:</span> k=3 משיג ציון Silhouette גבוה יותר (0.81 מול 0.63), אך אינו שימושי: הוא בסך הכל מבודד 3 נכסים רחוקים לתוך שני clusters זעירים (יחיד/זוג), ומשאיר 60 מתוך 63 הנכסים (95%!) ב-cluster אחד לא-מובחן. <strong>לכן נבחר k=4</strong>: הוא מפצל מתוך אותו cluster ענק תת-קבוצה גיאוגרפית אמיתית ובעלת אופי שונה — 7 נכסים באזור סן ג'ובאני/צ'ינצ'יטה ואפיה אנטיקה (דרום-מזרח רומא) — חלוקה שימושית משמעותית יותר על אף ציון ה-Silhouette הנמוך יותר, מה שממחיש ש-Silhouette לבדו יכול להטעות על דאטהסט קטן ובעל התפלגות גיאוגרפית לא-אחידה.</p>
+<table>
+<thead>
+<tr>
+<th>Cluster</th>
+<th>שם</th>
+<th>n</th>
+<th>מחיר ממוצע</th>
+<th>הנחה ממוצעת</th>
+<th>חיוביות ממוצעת</th>
+<th>ביקורות ממוצע</th>
+<th>סוג נכס דומיננטי</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>פנינות המרכז ההיסטורי המבוססות</td>
+<td>53</td>
+<td>€195.8</td>
+<td>42.1%</td>
+<td>93.9%</td>
+<td>101.6</td>
+<td>69.8% דירה שלמה</td>
+</tr>
+<tr>
+<td>2</td>
+<td>חדרים פרטיים במחיר מציאה, דרום-מזרח רומא</td>
+<td>7</td>
+<td>€77.3</td>
+<td><strong>49.4%</strong></td>
+<td>95.6%</td>
+<td>74.3</td>
+<td>71.4% חדר פרטי</td>
+</tr>
+<tr>
+<td>3</td>
+<td>פנינות פרבריות/חוף שקטות (אוסטיה/פורטואנזה)</td>
+<td>2</td>
+<td>€115.5</td>
+<td>20.1%</td>
+<td>100%</td>
+<td><strong>11.5</strong></td>
+<td>100% דירה שלמה</td>
+</tr>
+<tr>
+<td>1</td>
+<td>חריג צפוני בודד (קאסיה/פלמיניה)</td>
+<td>1</td>
+<td>€88.0</td>
+<td>45.0%</td>
+<td>100%</td>
+<td>57.0</td>
+<td>100% דירה שלמה</td>
+</tr>
+</tbody>
+</table>
+<p><span class="field-label">ויזואליזציה:</span> <code>clustering/scatter_k4.png</code> (פיזור גיאוגרפי, צביעה לפי cluster, מרכזים מסומנים).</p>
+<div class="figure"><img alt="Clusters של Hidden Gems" src="../clustering/scatter_k4.png" /></div>
+<p><span class="field-label">קשיים:</span> המגבלה המרכזית היא היעדר <code>accommodates</code>/<code>amenities_count</code> — ה-clustering עונה על <em>איפה</em> נמצאים סוגים שונים של Hidden Gems, לא על <em>איזה סוג נכס</em> הם. עם 63 נקודות בלבד והתפלגות גיאוגרפית לא-אחידה (רוב הנכסים במרכז, מעטים בפריפריה), לשניים מתוך ארבעת ה-clusters יש n≤2, מדגם קטן מדי כדי להסיק ממנו במלוא הביטחון — רק clusters 0 ו-2 מובהקים סטטיסטית.</p>
+<h2>בעיה 4 — איזו שפה מייחדת Hidden Gems? (ענני מילים)</h2>
+<p><span class="field-label">השערה:</span> המילים שאורחים משתמשים בהן כדי לתאר Hidden Gems שונות באופן שיטתי מהמילים המשמשות לתיאור שאר הנכסים, וחושפות <em>מה בדיוק</em> עושה נכס ל"פנינה נסתרת", מעבר לקריטריונים המספריים ששימשו להגדרתו (בדיקה איכותנית-סמנטית, ברוח שיטת ההערכה-ללא-ground-truth שנלמדה בהקשר של זיהוי קהילות).</p>
+<p><span class="field-label">הפתרון — פייפליין טקסט-מיינינג</span> (<code>build_wordclouds.py</code>), הופעל בנפרד על ביקורות 63 ה-Hidden Gems מול כל שאר הביקורות:<br />
+1. <strong>סינון שפה (התווסף באמצע הפרויקט):</strong> ההיוריסטיקה לזיהוי אנגלית בניקוי הבסיסי החמיצה כ-42% טקסט לא-אנגלי (ראו סעיף הנתונים) — הוספנו זיהוי שפה אמיתי לכל ביקורת (<code>langdetect</code>, הורץ במקביל על כל ליבות המעבד) והשארנו רק ביקורות שזוהו כאנגלית (300/356 ביקורות Hidden Gems; 339,336/620,669 שאר הביקורות).<br />
+2. <strong>Tokenization:</strong> פירוק מהיר מבוסס regex, תוך שמירת סימני פיסוק כטוקנים נפרדים כדי שישברו באופן טבעי סמיכות בין משפטים.<br />
+3. <strong>POS-Tagging:</strong> מתייג חלקי-הדיבר של <code>nltk</code> (Averaged Perceptron), הורץ <strong>לפני</strong> הסרת מילות עצירה (דיוק התיוג תלוי בהקשר תחבירי, שמילות העצירה מספקות).<br />
+4. <strong>חילוץ צירופים:</strong> נשמרים רק זוגות סמוכים בתבנית <strong>[תואר][שם עצם]</strong> (למשל "great location", "quiet neighborhood"), כנדרש במשימה.<br />
+5. <strong>הסרת מילות עצירה ורעש דומייני:</strong> מילות עצירה סטנדרטיות באנגלית בתוספת רשימה דומיינית (rome, apartment, host, stay, airbnb, room וצורות קרובות) — מוחל <em>אחרי</em> התיוג.<br />
+6. <strong>Lemmatization:</strong> <code>WordNetLemmatizer</code> (נבחר במקום Stemming כדי להימנע מגזעי מילים קטועים ובלתי-קריאים).</p>
+<p><span class="field-label">קריטריון הערכה:</span> איכותני-סמנטי — האם שני ענני המילים חושפים נושאים ברורים ונבדלים שמסבירים באופן סביר את ההבדלים הכמותיים שכבר מצאנו (בהתאם להנחיית הקורס שענני מילים הם דרך לגיטימית להעריך חלוקה כשאין ground truth).</p>
+<p><span class="field-label">Setup:</span> תדירויות הצירופים נספרו בנפרד לכל קבוצה; שני ענני המילים עוצבו בהגדרות זהות (גודל, colormap, seed לפריסה) כך שרק התוכן משתנה.</p>
+<p><span class="field-label">תוצאות:</span> צירופי "location" דומיננטיים בשני העננים (הגורם האוניברסלי לשביעות רצון), ואף בולטים יחסית יותר אצל ה-Hidden Gems (7.0% מהביקורות מזכירות צירוף location, מול 5.1% אצל השאר). מעבר לכך, שתי הקבוצות נבדלות: ביקורות על Hidden Gems מדגישות <strong>שפה אישית ויחסי-מארח</strong> ("thoughtful touch", "good communication", "detailed instruction", פרטים פיזיים ספציפיים כמו "washing machine", "ear plug"), בעוד ביקורות על שאר הנכסים מדגישות <strong>שפה של תשתית/לוגיסטיקה ושירות מלוטש</strong> ("super convenient/helpful/responsive", "easy access", "public transportation", "metro station", "quiet street/area/neighborhood").</p>
+<p><span class="field-label">ויזואליזציה:</span> <code>data/wordcloud_hidden_gems.png</code> ו-<code>data/wordcloud_other_listings.png</code>.</p>
+<p><img alt="ענן מילים - Hidden Gems" src="../data/wordcloud_hidden_gems.png" /><br />
+<img alt="ענן מילים - שאר הנכסים" src="../data/wordcloud_other_listings.png" /></p>
+<p><span class="field-label">קשיים:</span> מדגם ה-Hidden Gems קטן (300 ביקורות אנגליות מ-63 נכסים, מול 339,336 בקבוצת ההשוואה), כך שצירופים נדירים בענן הזה רועשים סטטיסטית; אפשר לסמוך רק על הצירופים שחוזרים בעקביות ובתדירות גבוהה יותר. מתודולוגיה מלאה והרחבה על המגבלות מתועדות בנפרד בקובץ <code>wordcloud_analysis.md</code>.</p>
+<h2>עבודה עתידית</h2>
+<ul>
+<li>להשיג ייצוא מלא יותר של נכסים (הכולל <code>accommodates</code>, <code>amenities_count</code>, <code>bedrooms</code>, <code>bathrooms</code>) ולהריץ מחדש את ה-clustering של בעיה 3 לפי מאפייני הנכס בפועל, ולא רק גיאוגרפיה — כדי לענות במלואה על שאלת "סוגי ה-Hidden Gems" המקורית.</li>
+<li>להגביל את עץ ההחלטה מבעיה 1 (<code>max_depth</code>, <code>min_samples_leaf</code>) או לנסות מודל אנסמבל (Random Forest / Gradient Boosting) כדי לצמצם overfitting ולקבל סימן פער-מחיר מהימן יותר.</li>
+<li>להעביר את סינון השפה שהוספנו לצעד המקדים עצמו (<code>clean_reviews.py</code>), כך שכל הקבצים בהמשך ייהנו מסינון אנגלית מדויק, לא רק שלב ענני המילים.</li>
+<li>לוודא את הגדרת ה-Hidden Gem מול איתות חיצוני אם יימצא (למשל בדיקה ידנית של מדגם מ-63 הנכסים, או השוואה מול סטטוס Superhost / קצב תגובה אם שדות כאלה יהיו זמינים).</li>
+<li>להרחיב את ניתוח ענני המילים לכל cluster בנפרד (שילוב בעיה 3 עם בעיה 4), ולבדוק האם הפיצול "מיקום מול יחס אישי" נשמר גם בתוך כל אזור גיאוגרפי.</li>
+</ul>
+<h2>מסקנה</h2>
+<p>התחלנו מנתוני נכסים וטקסט ביקורות גולמיים, ובנינו פייפליין מקצה-לקצה ש-(1) לומד קו בסיס לחיזוי מחיר, (2) משלב נפח ביקורות, סנטימנט, ופער מחיר-מול-חיזוי להגדרה עקבית של "Hidden Gem", (3) מראה שה-63 הנכסים שהתקבלו מתחלקים לתתי-סוגים גיאוגרפיים נבדלים, ו-(4) משתמש בכריית טקסט כדי להראות <em>למה</em> בעצם מעריכים אותם — חוויה אישית ומארחת יותר — לעומת הפנייה המבוססת-מיקום-ולוגיסטיקה של הנכסים הפופולריים. במהלך הדרך גילינו ותיקנו שתי בעיות איכות נתונים אמיתיות (תו מירכאות ששיבש קובצי CSV, וסינון שפה אנגלית מקל מדי) וכן מלכודת overfitting חשובה במודל המחיר — שני הממצאים האלה שינו באופן מהותי, ובסופו של דבר חיזקו את מהימנות התוצאות הסופיות.</p>
+</div>
+</body>
+</html>
