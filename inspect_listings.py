@@ -1,0 +1,16 @@
+import pandas as pd
+
+df = pd.read_csv('data/listings.csv', dtype=str)
+print('rows', len(df))
+print('columns', list(df.columns))
+print('missing per column:')
+print(df.isna().sum())
+print((df == '').sum())
+print('price empty or invalid count:', ((df['price'].isna()) | (df['price'] == '')).sum())
+dates = pd.to_datetime(df['last_review'], errors='coerce')
+print('valid last_review dates:', dates.notna().sum())
+print('date year counts:')
+print(dates.dt.year.value_counts(dropna=False).sort_index())
+print('count with year 2025:', int((dates.dt.year == 2025).sum()))
+print('sample rows with 2025:')
+print(df.loc[dates.dt.year == 2025, ['id','price','last_review']].head().to_string(index=False))
