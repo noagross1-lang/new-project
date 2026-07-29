@@ -140,7 +140,38 @@
 **ויזואליזציה:** `data/wordcloud_hidden_gems.png` ו-`data/wordcloud_other_listings.png`.
 
 ![ענן מילים - Hidden Gems](../data/wordcloud_hidden_gems.png)
+
+**10 הצירופים המובילים — Hidden Gems:**
+
+| # | צירוף | מספר הופעות |
+|---|---|---|
+| 1 | great location | 21 |
+| 2 | great restaurant | 8 |
+| 3 | main attraction | 7 |
+| 4 | public transport | 5 |
+| 5 | perfect location | 5 |
+| 6 | good restaurant | 5 |
+| 7 | amazing location | 5 |
+| 8 | next door | 4 |
+| 9 | major attraction | 4 |
+| 10 | last minute | 4 |
+
 ![ענן מילים - שאר הנכסים](../data/wordcloud_other_listings.png)
+
+**10 הצירופים המובילים — שאר הנכסים:**
+
+| # | צירוף | מספר הופעות |
+|---|---|---|
+| 1 | great location | 17,225 |
+| 2 | great restaurant | 8,016 |
+| 3 | good location | 7,249 |
+| 4 | short walk | 6,676 |
+| 5 | perfect location | 6,426 |
+| 6 | public transport | 6,381 |
+| 7 | easy access | 5,082 |
+| 8 | main attraction | 4,837 |
+| 9 | comfortable bed | 4,393 |
+| 10 | great time | 4,216 |
 
 **קשיים:** מדגם ה-Hidden Gems קטן (300 ביקורות אנגליות מ-63 נכסים, מול 339,336 בקבוצת ההשוואה), כך שצירופים נדירים בענן הזה רועשים סטטיסטית; אפשר לסמוך רק על הצירופים שחוזרים בעקביות ובתדירות גבוהה יותר. מתודולוגיה מלאה והרחבה על המגבלות מתועדות בנפרד בקובץ `wordcloud_analysis.md`.
 
