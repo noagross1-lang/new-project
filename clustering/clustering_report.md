@@ -46,7 +46,7 @@
 
 (מרכזי ה-clusters (centroids) בסקאלה המקורית — קובץ `cluster_centroids_k4.csv`; ממוצעי המשתנים המלאים — `cluster_means_k4.csv`; שיוך מלא לכל נכס — `cluster_assignments_k4.csv`)
 
-ויזואליזציה: `scatter_k4.png` — פיזור geographic (longitude על ציר ה-X, latitude על ציר ה-Y) עם צביעה לפי cluster ו-X שחור למרכזים.
+ויזואליזציה: `map_k4.png` — פיזור geographic על גבי מפת רומא בפועל (OpenStreetMap/CARTO), עם צביעה לפי cluster ו-X שחור למרכזים.
 
 ### תיאור קצר ראשוני (לפני אפיון נוסף)
 - **Cluster 0 (53 נכסים):** גוש מרכזי, בעיקר Centro Storico, Parioli/Nomentano, Aurelia — הרוב המכריע של הנכסים.
