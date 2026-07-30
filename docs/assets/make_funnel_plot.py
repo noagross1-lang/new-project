@@ -6,7 +6,8 @@ stages = [
     "+ Positive rate\n> 75%",
     "+ Price >= 15% below\npredicted price\n= Hidden Gem",
 ]
-counts = [7884, 4086, 1150, 63]
+# Printed by find_hidden_gems.py.
+counts = [22943, 10898, 2766, 562]
 color = "#0072B2"
 highlight_color = "#E69F00"
 
@@ -17,7 +18,7 @@ bars = ax.bar(range(len(stages)), counts, color=colors, edgecolor="black", linew
 for i, (bar, c) in enumerate(zip(bars, counts)):
     pct = c / counts[0] * 100
     label = f"{c:,}" if i == 0 else f"{c:,}  ({pct:.1f}%)"
-    ax.text(bar.get_x() + bar.get_width() / 2, c + 150, label, ha="center", fontsize=12, fontweight="bold")
+    ax.text(bar.get_x() + bar.get_width() / 2, c + counts[0] * 0.02, label, ha="center", fontsize=12, fontweight="bold")
 
 ax.set_xticks(range(len(stages)))
 ax.set_xticklabels(stages, fontsize=9.5)

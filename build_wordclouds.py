@@ -108,21 +108,24 @@ def make_wordcloud(freqs: Counter, title: str, output_path: str):
 
 
 def main():
-    hidden_gems = pd.read_csv(HIDDEN_GEMS_PATH)
-    hidden_ids = set(hidden_gems["listing_id"].astype(int))
+    # listing_id stays a string throughout: 18-19 digit Airbnb ids exceed float64
+    # precision, so a numeric dtype would round them and break this membership test.
+    hidden_gems = pd.read_csv(HIDDEN_GEMS_PATH, dtype={"listing_id": str})
+    hidden_ids = set(hidden_gems["listing_id"])
     print(f"Hidden gem listings: {len(hidden_ids)}")
 
     reviews = pd.read_csv(
         REVIEWS_PATH,
+        dtype={"listing_id": str},
         encoding="utf-8",
         encoding_errors="replace",
         engine="python",
         on_bad_lines="warn",
     )
 
-    valid_listing_id = reviews["listing_id"].astype(str).str.match(r"^\d+\.?0?$")
+    reviews["listing_id"] = reviews["listing_id"].astype(str).str.strip().str.removesuffix(".0")
+    valid_listing_id = reviews["listing_id"].str.fullmatch(r"\d+")
     reviews = reviews[valid_listing_id].copy()
-    reviews["listing_id"] = reviews["listing_id"].astype(float).astype(int)
 
     is_hidden = reviews["listing_id"].isin(hidden_ids)
     hidden_reviews = reviews.loc[is_hidden, TEXT_COLUMN]

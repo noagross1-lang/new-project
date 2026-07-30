@@ -5,7 +5,12 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
-from train_decision_tree import safe_load_listings, prepare_features
+from train_decision_tree import (
+    safe_load_listings,
+    prepare_features,
+    MAX_DEPTH,
+    MIN_SAMPLES_LEAF,
+)
 
 
 def run_experiment(test_size=0.8, random_state=42):
@@ -14,7 +19,11 @@ def run_experiment(test_size=0.8, random_state=42):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
 
-    model = DecisionTreeRegressor(random_state=random_state)
+    # Same hyperparameters as the main model, so this experiment isolates the
+    # effect of the train/test ratio rather than of tree complexity.
+    model = DecisionTreeRegressor(
+        random_state=random_state, max_depth=MAX_DEPTH, min_samples_leaf=MIN_SAMPLES_LEAF
+    )
     model.fit(X_train, y_train)
 
     pred_test = model.predict(X_test)
