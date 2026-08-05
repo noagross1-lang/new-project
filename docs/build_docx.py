@@ -24,7 +24,11 @@ def set_rtl(paragraph):
     pPr = paragraph._p.get_or_add_pPr()
     bidi = OxmlElement("w:bidi")
     pPr.append(bidi)
-    paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    # Confirmed empirically in this Word install/compat mode: once w:bidi is
+    # set on a paragraph, Word renders w:jc="right" flush LEFT and vice versa
+    # (center is unaffected). WD_ALIGN_PARAGRAPH.LEFT here is what actually
+    # displays as right-aligned Hebrew text.
+    paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
 
 def set_run_rtl(run):
@@ -155,8 +159,8 @@ def add_table(doc, table_tag):
             docx_cell = row_cells[c_idx]
             docx_cell.text = ""
             para = docx_cell.paragraphs[0]
-            para.alignment = WD_ALIGN_PARAGRAPH.CENTER
             set_rtl(para)
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER
             add_run(
                 para,
                 cell.get_text(),
@@ -202,10 +206,33 @@ def build():
     section.page_height = Cm(29.7)
     section.left_margin = section.right_margin = Cm(2.2)
     section.top_margin = section.bottom_margin = Cm(2)
+    # Word only honors per-paragraph w:bidi/w:jc reliably once the section
+    # itself is flagged RTL; without this the whole document silently
+    # renders left-aligned despite every paragraph saying "right". w:bidi
+    # must precede w:docGrid per the CT_SectPr schema order, or Word may
+    # flag the file as needing repair.
+    sectPr = section._sectPr
+    doc_grid = sectPr.find(qn("w:docGrid"))
+    bidi_sect = OxmlElement("w:bidi")
+    if doc_grid is not None:
+        doc_grid.addprevious(bidi_sect)
+    else:
+        sectPr.append(bidi_sect)
+
+    settings_el = doc.settings.element
+    theme_lang = settings_el.find(qn("w:themeFontLang"))
+    if theme_lang is not None:
+        theme_lang.set(qn("w:bidi"), "he-IL")
 
     style = doc.styles["Normal"]
     style.font.name = HEBREW_FONT
     style.font.size = Pt(11)
+    # w:bidi must precede w:jc in pPr, so add it before setting alignment.
+    style_pPr = style.element.get_or_add_pPr()
+    style_pPr.append(OxmlElement("w:bidi"))
+    style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    style_rPr = style.element.get_or_add_rPr()
+    style_rPr.append(OxmlElement("w:rtl"))
 
     first_h2_seen = False
     for node in soup.find_all(recursive=False):
