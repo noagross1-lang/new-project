@@ -50,9 +50,9 @@ CATEGORICAL_FEATURES = ['room_type', 'neighbourhood_cleansed', 'property_type']
 PROPERTY_TYPE_TOP_N = 15
 
 # Chosen by 5-fold cross-validation on the training split alone. An unconstrained
-# tree grew 17,619 leaves for 18,354 training rows - one leaf per listing - which
-# drove train RMSE to 0.01 while test RMSE stayed at 0.50. These limits give the
-# best CV score (0.4114) with almost no train/test gap, and keep the tree small
+# tree grew 4,440 leaves for 4,588 training rows - one leaf per listing - which
+# drove train RMSE to 0.004 while test RMSE stayed at 0.55. These limits give the
+# best CV score (0.4337) with a small train/test gap, and keep the tree small
 # enough to actually interpret.
 MAX_DEPTH = 8
 MIN_SAMPLES_LEAF = 20
@@ -154,7 +154,7 @@ def train_and_save(df, X, y, output_csv='data/listings_model_predictions.csv', m
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
 
     X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(
-        X, y, df.index, test_size=0.2, random_state=42
+        X, y, df.index, test_size=0.8, random_state=42
     )
 
     model = DecisionTreeRegressor(

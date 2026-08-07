@@ -20,8 +20,14 @@ merged = merged.merge(predictions, on="listing_id", how="inner")
 is_hidden = merged["is_hidden"] == 1
 is_well_reviewed = merged["positive_rate"] > POSITIVE_RATE_THRESHOLD
 is_underpriced = merged["price_clean"] <= merged["predicted_price"] * (1 - PRICE_DISCOUNT_THRESHOLD)
+# A listing's predicted price is only an honest, out-of-sample estimate if it
+# was in the price model's held-out test set; a training-set listing's price
+# was already seen by the tree, so it cannot be judged "underpriced" at all.
+is_test_set = merged["in_test_set"] == 1
 
-hidden_gems = merged[is_hidden & is_well_reviewed & is_underpriced].copy()
+underpriced_candidates = is_hidden & is_well_reviewed & is_underpriced
+
+hidden_gems = merged[underpriced_candidates & is_test_set].copy()
 hidden_gems["discount_pct"] = 1 - hidden_gems["price_clean"] / hidden_gems["predicted_price"]
 
 hidden_gems = hidden_gems[
@@ -39,9 +45,9 @@ print("--- Hidden gem funnel ---")
 print(f"Listings evaluable (in all three sources): {len(merged)}")
 print(f"  1. low exposure (reviews below median)  : {is_hidden.sum():6d}  ({pct(is_hidden.sum())})")
 print(f"  2. + positive rate > {POSITIVE_RATE_THRESHOLD}                : {(is_hidden & is_well_reviewed).sum():6d}  ({pct((is_hidden & is_well_reviewed).sum())})")
-print(f"  3. + priced >= {PRICE_DISCOUNT_THRESHOLD:.0%} below prediction  : {len(hidden_gems):6d}  ({pct(len(hidden_gems))})")
+print(f"  3. + priced >= {PRICE_DISCOUNT_THRESHOLD:.0%} below prediction  : {underpriced_candidates.sum():6d}  ({pct(underpriced_candidates.sum())})")
+print(f"  4. + in the price model's test set       : {len(hidden_gems):6d}  ({pct(len(hidden_gems))})")
 print(f"\nHidden gems found: {len(hidden_gems)}")
-print(f"  of which in the model's test split: {hidden_gems['in_test_set'].sum()} ({100 * hidden_gems['in_test_set'].mean():.1f}%)")
 print(f"Saved to: {OUTPUT_PATH}")
 print()
 print(hidden_gems.head(10).to_string(index=False))

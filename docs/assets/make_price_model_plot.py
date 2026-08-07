@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, "..\\..")
+sys.path.insert(0, "../..")
 
 import pandas as pd
 import numpy as np
@@ -18,7 +18,7 @@ df = safe_load_listings("../../data/listings_cleaned_2025.csv")
 df_prepared, X, y = prepare_features(df)
 
 X_train, X_test, y_train, y_test, idx_train, idx_test = train_test_split(
-    X, y, df_prepared.index, test_size=0.2, random_state=42
+    X, y, df_prepared.index, test_size=0.8, random_state=42
 )
 
 # Must match the model in train_decision_tree.py, or the plot shows a different

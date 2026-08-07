@@ -18,13 +18,13 @@ PROFILE_VARS = ["room_type", "neighbourhood_cleansed", "number_of_reviews", "pro
 
 K_RANGE = range(2, 7)
 
-# Silhouette falls monotonically across this range (0.31 at k=2 down to 0.22 at
-# k=6), which is what happens when the data is one continuous cloud rather than
-# well-separated blobs - it rewards merging, not meaningful structure. k=4 is the
-# smallest k at which all three property archetypes separate (compact/basic,
-# well-equipped mid-size, large group) alongside the coastal Ostia group. k=3
-# merges the first two; k=5 and k=6 only split on amenity count without adding
-# an interpretable distinction.
+# Silhouette is low and non-monotonic across this range (0.22-0.30), which is
+# what happens when the data is one continuous cloud rather than well-separated
+# blobs. k=4 is chosen on interpretability, not the raw score: it's the smallest
+# k at which all three property archetypes separate (compact/basic, compact but
+# well-equipped, large group) alongside the coastal Ostia group. k=3 merges the
+# two compact archetypes into one; k=5 and k=6 only split further on amenity
+# count without adding an interpretable distinction.
 FINAL_K = 4
 
 CLUSTER_COLORS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00"]
