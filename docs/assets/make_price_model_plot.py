@@ -40,22 +40,46 @@ is_hidden = test_ids.isin(hidden_ids).values
 
 fig, ax = plt.subplots(figsize=(7.5, 7))
 
-lims = [5, actual_price.max() * 1.2]
-ax.plot(lims, lims, color="#9a9a9a", linewidth=1.5, linestyle="--", zorder=1, label="Perfect prediction (y = x)")
+# Shared limits for both axes: only then does y = x sit at 45 degrees and does
+# "above/below the line" read as over-/under-prediction.
+#
+# The view is clipped to 20-2000 EUR. A handful of listings priced up to 9,999
+# EUR would otherwise stretch the square over three orders of magnitude and
+# leave most of the panel empty. Clipping is display-only -- the model is
+# trained and evaluated on the full data -- so the count of hidden points is
+# printed below and belongs in the figure caption.
+VIEW_MIN, VIEW_MAX = 20, 2000
+lims = [VIEW_MIN, VIEW_MAX]
+off_view = ((actual_price < VIEW_MIN) | (actual_price > VIEW_MAX)
+            | (predicted_price < VIEW_MIN) | (predicted_price > VIEW_MAX))
+
+ax.grid(True, which="major", color="#C7CDD3", linewidth=0.6, alpha=0.3, zorder=0)
+ax.set_axisbelow(True)
+
+ax.plot(lims, lims, color="#B8BEC4", linewidth=1.0, linestyle="-", zorder=1, label="Perfect prediction (y = x)")
 
 ax.scatter(
     actual_price[~is_hidden], predicted_price[~is_hidden],
-    s=22, color="#0072B2", alpha=0.45, edgecolor="none", label=f"Other listings (n={(~is_hidden).sum()})", zorder=2,
+    s=18, color="#A6B8C7", alpha=0.4, edgecolor="none", label=f"Other listings (n={(~is_hidden).sum():,})", zorder=2,
 )
 ax.scatter(
     actual_price[is_hidden], predicted_price[is_hidden],
-    s=70, color="#E69F00", edgecolor="black", linewidth=0.6, label=f"Hidden gems (n={is_hidden.sum()})", zorder=3,
+    s=60, color="#800020", edgecolor="white", linewidth=0.6, label=f"Hidden gems (n={is_hidden.sum():,})", zorder=3,
 )
 
 ax.set_xscale("log")
 ax.set_yscale("log")
 ax.set_xlim(lims)
 ax.set_ylim(lims)
+
+# Default log ticks label only 10^2 and 10^3, which makes euro values hard to
+# read off the axis. Label a 1-2-5 sequence as plain numbers instead, and drop
+# the minor ticks so the grid stays quiet.
+ticks = [20, 50, 100, 200, 500, 1000, 2000]
+for axis, setter in ((ax.xaxis, ax.set_xticks), (ax.yaxis, ax.set_yticks)):
+    setter(ticks)
+    axis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:,.0f}"))
+    axis.set_minor_locator(plt.NullLocator())
 ax.set_xlabel("Actual price (EUR, log scale)")
 ax.set_ylabel("Predicted price (EUR, log scale)")
 ax.set_title(
@@ -63,9 +87,21 @@ ax.set_title(
     fontsize=13,
     fontweight="bold",
 )
-ax.legend(loc="upper left", frameon=True, fontsize=9)
+leg = ax.legend(loc="upper left", frameon=True, fontsize=9)
+leg.get_frame().set_edgecolor("#D7DBDF")
+leg.get_frame().set_linewidth(0.6)
+for spine in ("top", "right"):
+    ax.spines[spine].set_visible(False)
+for spine in ("left", "bottom"):
+    ax.spines[spine].set_color("#9AA2AA")
+    ax.spines[spine].set_linewidth(0.8)
+ax.tick_params(colors="#5A6169", labelcolor="#33383D", length=3, width=0.8)
 ax.set_aspect("equal", adjustable="box")
 fig.tight_layout()
 fig.savefig("price_model_actual_vs_predicted.png", dpi=150)
 print("Saved price_model_actual_vs_predicted.png")
 print(f"Test set size: {len(actual_price)}")
+print(
+    f"Outside the {VIEW_MIN}-{VIEW_MAX} EUR view: {off_view.sum()} listings "
+    f"({off_view.mean() * 100:.2f}%) -- state this in the figure caption"
+)
