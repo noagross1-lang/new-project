@@ -73,9 +73,12 @@ PROFILE_COLUMNS = [
 
 # Rows run compact -> equipped -> large, so the size/amenity block reads as a
 # gradient, with the geographic exception held back to last behind a rule.
+# NB: the cluster ids are the labels K-means happened to emit and carry no
+# meaning of their own -- they are printed only so a reader can trace a row
+# back to cluster_assignments_k4.csv.
 ROW_ORDER = [
-    (1, "Compact & basic"),
-    (3, "Compact, well equipped"),
+    (3, "Compact & basic"),
+    (1, "Compact, well equipped"),
     (2, "Large, for groups"),
     (0, "Quiet coastal gems"),
 ]
@@ -197,14 +200,45 @@ def draw_geographic_rule(ax):
     )
 
 
-def add_colorbar(fig, ax):
-    mappable = plt.cm.ScalarMappable(cmap=DIVERGING, norm=plt.Normalize(-Z_CAP, Z_CAP))
-    cbar = fig.colorbar(mappable, ax=ax, fraction=0.02, pad=0.015, aspect=18)
-    cbar.set_ticks([-Z_CAP, 0, Z_CAP])
-    cbar.set_ticklabels([f"−{Z_CAP:g} SD", "average\nHidden Gem", f"+{Z_CAP:g} SD"])
-    cbar.ax.tick_params(colors=MUTED_INK, labelcolor=LABEL_INK, length=0, labelsize=8.5)
-    cbar.outline.set_visible(False)
-    return cbar
+def draw_key(fig):
+    """A legend that explains BOTH encodings, in words rather than statistics.
+
+    The first version of this figure carried a vertical colourbar labelled
+    "+/-1.5 SD", which explained neither what the printed number was nor what
+    the colour meant without someone standing next to the reader. Every cell
+    holds two channels -- a value in its own units and a deviation shown as
+    colour -- so the key has to name both, and it says "typical Hidden Gem"
+    rather than "0 SD" because that is the comparison actually being made.
+    """
+    key_left, key_width = 0.615, 0.285
+    fig.text(key_left, 0.945, "How to read a cell", fontsize=10,
+             fontweight="bold", color=LABEL_INK, ha="left", va="top")
+    fig.text(key_left, 0.912,
+             "The number is that cluster's average, in its own units.",
+             fontsize=9, color=MUTED_INK, ha="left", va="top")
+    fig.text(key_left, 0.884,
+             "The colour is how far that sits from a typical Hidden Gem:",
+             fontsize=9, color=MUTED_INK, ha="left", va="top")
+
+    # A gradient strip rather than a colourbar, so it carries no numeric ticks
+    # to be misread as the cell values.
+    bar = fig.add_axes([key_left, 0.815, key_width, 0.030])
+    bar.imshow(np.linspace(-1, 1, 256).reshape(1, -1), aspect="auto",
+               cmap=DIVERGING, vmin=-1, vmax=1)
+    bar.set_xticks([])
+    bar.set_yticks([])
+    for spine in bar.spines.values():
+        spine.set_visible(False)
+
+    for x, label, align in [
+        (key_left, "much lower", "left"),
+        (key_left + key_width / 2, "typical", "center"),
+        (key_left + key_width, "much higher", "right"),
+    ]:
+        fig.text(x, 0.800, label, fontsize=8.5, color=LABEL_INK, ha=align, va="top")
+    fig.text(key_left, 0.762,
+             f"Colour saturates at ±{Z_CAP:g} standard deviations.",
+             fontsize=8, color=MUTED_INK, ha="left", va="top", style="italic")
 
 
 def main():
@@ -229,23 +263,24 @@ def main():
     for spine in ax.spines.values():
         spine.set_visible(False)
 
-    add_colorbar(fig, ax)
+    draw_key(fig)
 
     fig.suptitle(
         f"What separates the four Hidden Gem clusters (k = 4, n = {n_listings:,})",
         fontsize=14, fontweight="bold", x=0.012, ha="left", y=0.975,
     )
+    # Kept to the left ~55% of the width so it cannot collide with the key.
     fig.text(
-        0.012, 0.905,
-        "Cluster averages, as distance from the average Hidden Gem. Size and amenity level carry the split; "
-        "location separates only the coastal group,\nand the discount rate is near-constant across all four — "
-        "so the clusters describe property type, not how cheap a listing is.",
+        0.012, 0.915,
+        "Size and amenity level carry the split; location separates only the\n"
+        "coastal group. The discount rate is near-constant across all four, so\n"
+        "the clusters describe property type, not how cheap a listing is.",
         fontsize=9.5, color=MUTED_INK, ha="left", va="top",
     )
     # Set explicitly rather than via tight_layout: the row labels are long and
-    # the colourbar's midpoint tick wraps onto two lines, neither of which
-    # tight_layout can reserve space for alongside a suptitle.
-    fig.subplots_adjust(left=0.175, right=0.905, top=0.80, bottom=0.055)
+    # the key is placed in figure coordinates, neither of which tight_layout
+    # can reserve space for alongside a suptitle.
+    fig.subplots_adjust(left=0.175, right=0.985, top=0.685, bottom=0.055)
 
     fig.savefig(OUTPUT, dpi=150)
     print(f"Saved {OUTPUT.name}")
