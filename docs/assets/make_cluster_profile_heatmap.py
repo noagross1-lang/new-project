@@ -1,20 +1,36 @@
 """Cluster profile heatmap for Problem 3 (k=4 Hidden Gems clustering).
 
-The map this replaces spent its whole canvas on location -- the one dimension
-that does NOT separate the clusters -- so three of the four groups landed on top
-of each other in central Rome and the figure argued against the finding. This
-one encodes each cluster's centroid as a distance from the average Hidden Gem,
-which makes the two claims of the section visible instead of merely asserted:
+This figure REPLACES the results table in the write-up rather than illustrating
+it, which drives two of its design choices.
 
-  1. the location columns sit at ~0 for all three mainland clusters and blow out
+Orientation: variables run down the rows and clusters across the columns,
+matching the table it replaces. The earlier landscape version was 13 inches
+wide, which on an A4 page in a Hebrew document shrank by half and left the cell
+values at roughly 5pt. Portrait keeps the type legible at print size, and it
+also suits the right-to-left reading of the surrounding text: the argument now
+reads along rows ("the latitude and longitude rows are pale, the size and
+amenity rows are not") with the variable names anchored on the right-hand side.
+
+Column order therefore runs coastal-first left to right, so that read from the
+right it goes compact -> well equipped -> large -> coastal, the same order the
+document's prose uses.
+
+The map this ultimately replaces spent its whole canvas on location -- the one
+dimension that does NOT separate the clusters -- so three of the four groups
+landed on top of each other in central Rome and the figure argued against the
+finding. This one encodes each cluster's centroid as a distance from the
+average Hidden Gem, which makes the two claims of the section visible instead
+of merely asserted:
+
+  1. the location rows sit at ~0 for all three mainland clusters and blow out
      only for the coastal one, so location separates exactly one group;
-  2. the discount column is near-flat, so the split captures property TYPE
-     rather than "how cheap" -- the sanity check that the clustering added
-     information the Hidden Gem criterion did not already contain.
+  2. the discount row is near-flat, so the split captures property TYPE rather
+     than "how cheap" -- the sanity check that the clustering added information
+     the Hidden Gem criterion did not already contain.
 
 The clustering variables and the profiling variables are drawn as two blocks
-with a gap, because the distinction matters for the defence: price, discount,
-positive rate and review count never entered the algorithm.
+with a gap, because the distinction matters for the defence: price, predicted
+price, discount, positive rate and review count never entered the algorithm.
 """
 
 from pathlib import Path
@@ -30,8 +46,6 @@ OUTPUT = Path(__file__).resolve().parent / "cluster_profile_heatmap.png"
 
 BASE_COLOR = "#A6B8C7"
 HIGHLIGHT_COLOR = "#800020"
-GRID_COLOR = "#C7CDD3"
-SPINE_COLOR = "#9AA2AA"
 LABEL_INK = "#33383D"
 MUTED_INK = "#6B7280"
 RULE_COLOR = "#B8BEC4"
@@ -52,39 +66,41 @@ DIVERGING = LinearSegmentedColormap.from_list(
 # (-3.8 SD) and longitude (-3.3 SD) would compress every other cell to white and
 # hide the size/amenity contrast that is the actual finding. Nothing is lost:
 # every cell is annotated with its value in original units, so the figure is its
-# own table view -- required for a continuous colour scale.
+# own table view -- required for a continuous colour scale, and doubly so here
+# because this figure IS the table.
 Z_CAP = 1.5
 
-# (column, header, unit formatter). Order is deliberate: the two location
-# variables lead, so the eye hits the flat pair first.
-CLUSTER_COLUMNS = [
+# (column, row label, unit formatter). The two location variables lead, so the
+# eye hits the flat pair first.
+CLUSTER_ROWS = [
     ("latitude", "Latitude", lambda v: f"{v:.2f}"),
     ("longitude", "Longitude", lambda v: f"{v:.2f}"),
     ("accommodates", "Guests", lambda v: f"{v:.1f}"),
     ("bedrooms", "Bedrooms", lambda v: f"{v:.1f}"),
     ("amenities_count", "Amenities", lambda v: f"{v:.1f}"),
 ]
-PROFILE_COLUMNS = [
-    ("price_clean", "Price", lambda v: f"€{v:.0f}"),
-    ("discount_pct", "Discount vs.\npredicted", lambda v: f"{v:.1f}%"),
-    ("positive_rate", "Positive\nreviews", lambda v: f"{v:.1f}%"),
-    ("number_of_reviews", "Review\ncount", lambda v: f"{v:.1f}"),
+PROFILE_ROWS = [
+    ("price_clean", "Price per night", lambda v: f"€{v:.0f}"),
+    ("predicted_price", "Predicted price", lambda v: f"€{v:.0f}"),
+    ("discount_pct", "Discount vs. predicted", lambda v: f"{v:.1f}%"),
+    ("positive_rate", "Positive reviews", lambda v: f"{v:.1f}%"),
+    ("number_of_reviews", "Review count", lambda v: f"{v:.1f}"),
 ]
 
-# Rows run compact -> equipped -> large, so the size/amenity block reads as a
-# gradient, with the geographic exception held back to last behind a rule.
-# NB: the cluster ids are the labels K-means happened to emit and carry no
-# meaning of their own -- they are printed only so a reader can trace a row
-# back to cluster_assignments_k4.csv.
-ROW_ORDER = [
-    (3, "Compact & basic"),
-    (1, "Compact, well equipped"),
-    (2, "Large, for groups"),
-    (0, "Quiet coastal gems"),
+# Left to right, so that read right-to-left it runs compact -> equipped ->
+# large -> coastal. The cluster ids are the labels K-means happened to emit and
+# carry no meaning of their own; they are printed only so a reader can trace a
+# column back to cluster_assignments_k4.csv.
+COLUMN_ORDER = [
+    (0, "Quiet coastal\ngems"),
+    (2, "Large,\nfor groups"),
+    (1, "Compact,\nwell equipped"),
+    (3, "Compact\n& basic"),
 ]
-GEOGRAPHIC_ROW = 3  # index in ROW_ORDER, i.e. where the separating rule goes
+GEOGRAPHIC_COL = 1  # rule goes to the left of this index, isolating the coastal column
 
-BLOCK_GAP = 0.6  # in column widths, between the two column blocks
+BLOCK_GAP = 0.55  # in row heights, between the two row blocks
+LABEL_X = 3.62    # right edge of the grid, where the row labels start
 
 
 def load_profile():
@@ -93,7 +109,7 @@ def load_profile():
     df["discount_pct"] = df["discount_pct"] * 100
     df["positive_rate"] = df["positive_rate"] * 100
 
-    columns = [c for c, _, _ in CLUSTER_COLUMNS + PROFILE_COLUMNS]
+    columns = [c for c, _, _ in CLUSTER_ROWS + PROFILE_ROWS]
     means = df.groupby("cluster")[columns].mean()
     # Deviation is measured against the Hidden Gems themselves, not against all
     # Rome listings: the question is how the sub-groups differ from a typical
@@ -103,28 +119,27 @@ def load_profile():
     return means, z, sizes, len(df)
 
 
-def x_position(col_index):
-    """Column centre, with the profiling block pushed right by the gap."""
-    return col_index + (BLOCK_GAP if col_index >= len(CLUSTER_COLUMNS) else 0)
+def y_position(row_index):
+    """Row centre, with the profiling block pushed down by the gap."""
+    return row_index + (BLOCK_GAP if row_index >= len(CLUSTER_ROWS) else 0)
 
 
 def draw_cells(ax, means, z):
-    columns = CLUSTER_COLUMNS + PROFILE_COLUMNS
+    rows = CLUSTER_ROWS + PROFILE_ROWS
     clipped = 0
-    for row, (cluster_id, _) in enumerate(ROW_ORDER):
-        for col, (name, _, fmt) in enumerate(columns):
+    for row, (name, _, fmt) in enumerate(rows):
+        y = y_position(row)
+        for col, (cluster_id, _) in enumerate(COLUMN_ORDER):
             value = means.loc[cluster_id, name]
             z_value = z.loc[cluster_id, name]
             if abs(z_value) > Z_CAP:
                 clipped += 1
             shade = np.clip(z_value, -Z_CAP, Z_CAP) / Z_CAP  # -1..1
-            x = x_position(col)
 
-            # A 2px-equivalent surface gap between cells rather than a border
-            # drawn around each one.
+            # A surface gap between cells rather than a border drawn round each.
             ax.add_patch(
                 plt.Rectangle(
-                    (x - 0.47, row - 0.44), 0.94, 0.88,
+                    (col - 0.46, y - 0.42), 0.92, 0.84,
                     facecolor=DIVERGING((shade + 1) / 2), edgecolor="none",
                 )
             )
@@ -132,132 +147,118 @@ def draw_cells(ax, means, z):
             # the value never wears the series colour.
             dark = abs(shade) > 0.62
             ax.text(
-                x, row, fmt(value), ha="center", va="center", fontsize=10,
+                col, y, fmt(value), ha="center", va="center", fontsize=11,
                 color="white" if dark else LABEL_INK,
                 fontweight="bold" if dark else "normal",
             )
     return clipped
 
 
-def draw_row_labels(ax, sizes):
-    for row, (cluster_id, name) in enumerate(ROW_ORDER):
-        ax.text(-0.75, row - 0.15, name, ha="right", va="center",
-                fontsize=10.5, color=LABEL_INK, fontweight="bold")
-        ax.text(-0.75, row + 0.19, f"Cluster {cluster_id}  ·  n = {sizes[cluster_id]:,}",
-                ha="right", va="center", fontsize=8.5, color=MUTED_INK)
+def draw_row_labels(ax):
+    """Anchored on the right-hand side, where a Hebrew reader starts the row."""
+    for row, (_, label, _) in enumerate(CLUSTER_ROWS + PROFILE_ROWS):
+        ax.text(LABEL_X, y_position(row), label, ha="left", va="center",
+                fontsize=11, color=LABEL_INK)
 
 
-def draw_column_headers(ax):
-    for col, (_, header, _) in enumerate(CLUSTER_COLUMNS + PROFILE_COLUMNS):
-        ax.text(x_position(col), -0.62, header, ha="center", va="bottom",
-                fontsize=9.5, color=LABEL_INK)
-
-
-def draw_block_headers(ax):
-    """Naming the two blocks is the point: only the left one built the clusters."""
+def draw_block_labels(ax):
+    """Naming the two blocks is the point: only the first built the clusters."""
     blocks = [
-        (0, len(CLUSTER_COLUMNS) - 1, "CLUSTERING VARIABLES", "these built the clusters"),
-        (len(CLUSTER_COLUMNS), len(CLUSTER_COLUMNS) + len(PROFILE_COLUMNS) - 1,
-         "PROFILING VARIABLES", "never seen by the algorithm"),
+        (0, "THESE BUILT THE CLUSTERS"),
+        (len(CLUSTER_ROWS), "NEVER SEEN BY THE ALGORITHM"),
     ]
-    for first, last, title, subtitle in blocks:
-        left, right = x_position(first) - 0.47, x_position(last) + 0.47
-        centre = (left + right) / 2
-        ax.plot([left, right], [-1.42, -1.42], color=RULE_COLOR, linewidth=1.0)
-        # Spaced out by hand: matplotlib has no letter-spacing, and the small
-        # caps need the extra air to read as a section marker rather than a label.
-        ax.text(centre, -1.52, " ".join(title), ha="center", va="bottom",
-                fontsize=9, color=MUTED_INK, fontweight="bold")
-        ax.text(centre, -1.30, subtitle, ha="center", va="top",
-                fontsize=8.5, color=MUTED_INK, style="italic")
+    for first_row, title in blocks:
+        y = y_position(first_row) - 0.62
+        ax.text(LABEL_X, y, title, ha="left", va="center",
+                fontsize=8.5, color=MUTED_INK, fontweight="bold")
+        ax.plot([-0.46, 3.46], [y + 0.20] * 2, color=RULE_COLOR,
+                linewidth=1.0, clip_on=False)
 
 
-def draw_callouts(ax):
-    """Two brackets marking the cells that carry the section's argument."""
-    callouts = [
-        # "no separation" would misread against the dark coastal cells directly
-        # above the bracket, so the exception is named rather than contradicted.
-        (0, 1, "identical, except for the coastal group"),        # latitude, longitude
-        (len(CLUSTER_COLUMNS) + 1, len(CLUSTER_COLUMNS) + 1, "flat"),  # discount
-    ]
-    y = len(ROW_ORDER) - 0.42
-    for first, last, label in callouts:
-        left, right = x_position(first) - 0.47, x_position(last) + 0.47
-        ax.plot([left, left, right, right], [y + 0.10, y + 0.20, y + 0.20, y + 0.10],
-                color=RULE_COLOR, linewidth=1.0, clip_on=False)
-        # va="top" hangs the label below the bracket: the axis is inverted, so
-        # "bottom" would push the text back up over the line it belongs under.
-        ax.text((left + right) / 2, y + 0.26, label, ha="center", va="top",
-                fontsize=9, color=MUTED_INK, style="italic", clip_on=False)
+def draw_column_headers(ax, sizes):
+    for col, (cluster_id, label) in enumerate(COLUMN_ORDER):
+        ax.text(col, -1.30, label, ha="center", va="bottom",
+                fontsize=10.5, color=LABEL_INK, fontweight="bold")
+        # Two lines: on one line these run into each other at column width.
+        ax.text(col, -1.20, f"Cluster {cluster_id}\nn = {sizes[cluster_id]:,}",
+                ha="center", va="top", fontsize=8.5, color=MUTED_INK,
+                linespacing=1.4)
 
 
 def draw_geographic_rule(ax):
-    """Separates the three property archetypes from the one geographic group."""
-    n_cols = len(CLUSTER_COLUMNS) + len(PROFILE_COLUMNS)
-    ax.plot(
-        [-0.6, x_position(n_cols - 1) + 0.47], [GEOGRAPHIC_ROW - 0.5] * 2,
-        color=RULE_COLOR, linewidth=1.0, clip_on=False,
-    )
+    """Separates the one geographically defined group from the property types."""
+    x = GEOGRAPHIC_COL - 0.5
+    bottom = y_position(len(CLUSTER_ROWS) + len(PROFILE_ROWS) - 1) + 0.42
+    ax.plot([x, x], [-1.35, bottom], color=RULE_COLOR, linewidth=1.0, clip_on=False)
+
+
+def draw_callouts(ax):
+    """Brackets marking the rows that carry the section's argument."""
+    callouts = [
+        # "no separation" would misread against the dark coastal cells at the
+        # end of these rows, so the exception is named rather than contradicted.
+        (0, 1, "identical, except for the coastal group"),
+        (len(CLUSTER_ROWS) + 2, len(CLUSTER_ROWS) + 2, "flat"),
+    ]
+    for first, last, label in callouts:
+        top, bottom = y_position(first) - 0.42, y_position(last) + 0.42
+        x = -0.60
+        ax.plot([x + 0.10, x, x, x + 0.10], [top, top, bottom, bottom],
+                color=RULE_COLOR, linewidth=1.0, clip_on=False)
+        ax.text(x - 0.10, (top + bottom) / 2, label, ha="center", va="center",
+                fontsize=9, color=MUTED_INK, style="italic", rotation=90,
+                clip_on=False)
 
 
 def draw_key(fig):
     """A legend that explains BOTH encodings, in words rather than statistics.
 
-    The first version of this figure carried a vertical colourbar labelled
-    "+/-1.5 SD", which explained neither what the printed number was nor what
-    the colour meant without someone standing next to the reader. Every cell
-    holds two channels -- a value in its own units and a deviation shown as
-    colour -- so the key has to name both, and it says "typical Hidden Gem"
-    rather than "0 SD" because that is the comparison actually being made.
+    Every cell holds two channels -- a value in its own units and a deviation
+    shown as colour -- so the key has to name both, and it says "typical Hidden
+    Gem" rather than "0 SD" because that is the comparison actually being made.
     """
-    key_left, key_width = 0.615, 0.285
-    fig.text(key_left, 0.945, "How to read a cell", fontsize=10,
+    left, width = 0.085, 0.535
+    fig.text(left, 0.088, "How to read a cell", fontsize=10.5,
              fontweight="bold", color=LABEL_INK, ha="left", va="top")
-    fig.text(key_left, 0.912,
-             "The number is that cluster's average, in its own units.",
-             fontsize=9, color=MUTED_INK, ha="left", va="top")
-    fig.text(key_left, 0.884,
-             "The colour is how far that sits from a typical Hidden Gem:",
-             fontsize=9, color=MUTED_INK, ha="left", va="top")
+    fig.text(left, 0.062,
+             "Number = the cluster's average, in its own units.\n"
+             "Colour = how far that sits from a typical Hidden Gem:",
+             fontsize=9.5, color=MUTED_INK, ha="left", va="top")
 
     # A gradient strip rather than a colourbar, so it carries no numeric ticks
     # to be misread as the cell values.
-    bar = fig.add_axes([key_left, 0.815, key_width, 0.030])
+    bar = fig.add_axes([left + width + 0.045, 0.043, 0.285, 0.019])
     bar.imshow(np.linspace(-1, 1, 256).reshape(1, -1), aspect="auto",
                cmap=DIVERGING, vmin=-1, vmax=1)
     bar.set_xticks([])
     bar.set_yticks([])
     for spine in bar.spines.values():
         spine.set_visible(False)
-
     for x, label, align in [
-        (key_left, "much lower", "left"),
-        (key_left + key_width / 2, "typical", "center"),
-        (key_left + key_width, "much higher", "right"),
+        (left + width + 0.045, "much lower", "left"),
+        (left + width + 0.188, "typical", "center"),
+        (left + width + 0.330, "much higher", "right"),
     ]:
-        fig.text(x, 0.800, label, fontsize=8.5, color=LABEL_INK, ha=align, va="top")
-    fig.text(key_left, 0.762,
-             f"Colour saturates at ±{Z_CAP:g} standard deviations.",
-             fontsize=8, color=MUTED_INK, ha="left", va="top", style="italic")
+        fig.text(x, 0.036, label, fontsize=9, color=LABEL_INK, ha=align, va="top")
 
 
 def main():
     means, z, sizes, n_listings = load_profile()
 
-    fig, ax = plt.subplots(figsize=(13.0, 6.1))
+    fig, ax = plt.subplots(figsize=(7.8, 8.9))
 
     clipped = draw_cells(ax, means, z)
-    draw_row_labels(ax, sizes)
-    draw_column_headers(ax)
-    draw_block_headers(ax)
-    draw_callouts(ax)
+    draw_row_labels(ax)
+    draw_block_labels(ax)
+    draw_column_headers(ax, sizes)
     draw_geographic_rule(ax)
+    draw_callouts(ax)
 
-    n_cols = len(CLUSTER_COLUMNS) + len(PROFILE_COLUMNS)
-    ax.set_xlim(-0.55, x_position(n_cols - 1) + 0.5)
-    # Bottom limit leaves room for the callout brackets, which sit below the
-    # last row of cells.
-    ax.set_ylim(len(ROW_ORDER) + 0.32, -1.75)
+    n_rows = len(CLUSTER_ROWS) + len(PROFILE_ROWS)
+    # Right limit leaves room for the longest row label and the block headings,
+    # which sit outside the grid rather than as tick labels.
+    ax.set_xlim(-0.95, 5.85)
+    ax.set_ylim(y_position(n_rows - 1) + 0.55, -1.75)
     ax.set_xticks([])
     ax.set_yticks([])
     for spine in ax.spines.values():
@@ -267,29 +268,27 @@ def main():
 
     fig.suptitle(
         f"What separates the four Hidden Gem clusters (k = 4, n = {n_listings:,})",
-        fontsize=14, fontweight="bold", x=0.012, ha="left", y=0.975,
+        fontsize=13, fontweight="bold", x=0.012, ha="left", y=0.982,
     )
-    # Kept to the left ~55% of the width so it cannot collide with the key.
     fig.text(
-        0.012, 0.915,
-        "Size and amenity level carry the split; location separates only the\n"
-        "coastal group. The discount rate is near-constant across all four, so\n"
-        "the clusters describe property type, not how cheap a listing is.",
+        0.012, 0.955,
+        "Size and amenity level carry the split; location separates only the coastal group.",
         fontsize=9.5, color=MUTED_INK, ha="left", va="top",
     )
-    # Set explicitly rather than via tight_layout: the row labels are long and
-    # the key is placed in figure coordinates, neither of which tight_layout
-    # can reserve space for alongside a suptitle.
-    fig.subplots_adjust(left=0.175, right=0.985, top=0.685, bottom=0.055)
+    # Set explicitly rather than via tight_layout: the row labels sit outside
+    # the axes on the right and the key is placed in figure coordinates,
+    # neither of which tight_layout can reserve space for.
+    fig.subplots_adjust(left=0.02, right=0.98, top=0.915, bottom=0.115)
 
-    fig.savefig(OUTPUT, dpi=150)
+    fig.savefig(OUTPUT, dpi=200)
     print(f"Saved {OUTPUT.name}")
-    total = len(ROW_ORDER) * n_cols
+    total = n_rows * len(COLUMN_ORDER)
     print(f"  cells beyond the ±{Z_CAP:g} SD colour cap: {clipped} of {total} "
           f"({clipped / total * 100:.1f}%) - values still printed in the cells")
-    for cluster_id, name in ROW_ORDER:
-        lat, lon = z.loc[cluster_id, "latitude"], z.loc[cluster_id, "longitude"]
-        print(f"  {name:<24} lat {lat:+.2f} SD, lon {lon:+.2f} SD, "
+    for cluster_id, name in COLUMN_ORDER:
+        label = name.replace("\n", " ")
+        print(f"  {label:<24} lat {z.loc[cluster_id, 'latitude']:+.2f} SD, "
+              f"lon {z.loc[cluster_id, 'longitude']:+.2f} SD, "
               f"discount {z.loc[cluster_id, 'discount_pct']:+.2f} SD")
 
 
