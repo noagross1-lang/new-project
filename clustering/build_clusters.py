@@ -44,10 +44,6 @@ FINAL_K = 4
 EXTERNAL_VARS = ["price_tertile", "room_type", "discount_tertile"]
 N_BASELINE_SHUFFLES = 1000
 
-# Per-cluster scatter colours, kept for the diagnostic scatter plots only. The
-# write-up figures follow the project's own two-pole style instead.
-CLUSTER_COLORS = ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#56B4E9", "#D55E00", "#F0E442"]
-
 # Figure style shared with the rest of the write-up's plots.
 BASE_COLOR = "#A6B8C7"
 HIGHLIGHT_COLOR = "#800020"
@@ -138,50 +134,6 @@ def summarize_solution(df, labels, scaler, model, X_scaled, k):
           f"(cap {MAX_ITER}, tol {TOL:g}, init {INIT_METHOD}, {N_INIT} restarts)")
 
     return df, centroids_df, means_df, model.inertia_
-
-
-def plot_clusters(df, k, centroids_df, output_path):
-    """Two views: geography, and the property features that geography cannot show."""
-    fig, (ax_geo, ax_prop) = plt.subplots(1, 2, figsize=(16, 7))
-
-    for cluster_id in sorted(df["cluster"].unique()):
-        sub = df[df["cluster"] == cluster_id]
-        color = CLUSTER_COLORS[cluster_id % len(CLUSTER_COLORS)]
-        ax_geo.scatter(
-            sub["longitude"], sub["latitude"], s=45, color=color,
-            edgecolor="black", linewidth=0.4, alpha=0.85,
-            label=f"Cluster {cluster_id} (n={len(sub)})",
-        )
-        ax_prop.scatter(
-            sub["accommodates"], sub["amenities_count"], s=45, color=color,
-            edgecolor="black", linewidth=0.4, alpha=0.85,
-            label=f"Cluster {cluster_id} (n={len(sub)})",
-        )
-
-    ax_geo.scatter(
-        centroids_df["longitude"], centroids_df["latitude"], marker="X", s=260,
-        color="black", edgecolor="white", linewidth=1.2, label="Centroids", zorder=5,
-    )
-    ax_geo.set_xlabel("Longitude")
-    ax_geo.set_ylabel("Latitude")
-    ax_geo.set_title("Location")
-    ax_geo.set_aspect("equal", adjustable="datalim")
-    ax_geo.legend(loc="best", frameon=True, fontsize=8)
-
-    ax_prop.scatter(
-        centroids_df["accommodates"], centroids_df["amenities_count"], marker="X", s=260,
-        color="black", edgecolor="white", linewidth=1.2, label="Centroids", zorder=5,
-    )
-    ax_prop.set_xlabel("Accommodates (guests)")
-    ax_prop.set_ylabel("Number of amenities")
-    ax_prop.set_title("Property characteristics")
-    ax_prop.legend(loc="best", frameon=True, fontsize=8)
-
-    fig.suptitle(f"Hidden Gems - K-Means Clusters (k={k})", fontsize=16, fontweight="bold")
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=150)
-    plt.close()
-    print(f"Saved: {output_path}")
 
 
 # The elbow (peak curvature of the SSE curve) and the k actually used are not
@@ -446,10 +398,9 @@ def main():
             df, labels, scaler, model, X_scaled, k
         )
         # k=1 is run for its SSE alone -- it is the elbow's baseline. Its
-        # "clusters" are the whole dataset, so per-listing assignments and a
-        # scatter of one colour would be noise on disk.
+        # "clusters" are the whole dataset, so per-listing assignments would be
+        # noise on disk.
         if k > 1:
-            plot_clusters(labeled_df, k, centroids_df, f"scatter_k{k}.png")
             labeled_df.to_csv(f"cluster_assignments_k{k}.csv", index=False)
             centroids_df.to_csv(f"cluster_centroids_k{k}.csv")
             means_df.to_csv(f"cluster_means_k{k}.csv")

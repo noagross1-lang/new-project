@@ -17,9 +17,8 @@ REVIEWS_PATH = "data/reviews_cleaned_2025.csv"
 HIDDEN_GEMS_PATH = "data/hidden_gems.csv"
 TEXT_COLUMN = "comments_clean"
 
-# v2 outputs: kept separate from the original wordcloud_*.png / wordcloud_phrases_*.csv
-# on purpose, so this rerun (2-3 word adj+noun phrases instead of adj+noun bigrams
-# only) does not change the assets the existing writeup.md/writeup.docx embed.
+# The "_v2" suffix dates from the rerun that widened the extraction from adj+noun
+# bigrams to 2-3 word adj+noun phrases. These are the outputs the write-up uses.
 PHRASES_HIDDEN_CSV = "data/wordcloud_phrases_hidden_gems_v2.csv"
 PHRASES_OTHER_CSV = "data/wordcloud_phrases_other_listings_v2.csv"
 WORDCLOUD_HIDDEN_PNG = "data/wordcloud_hidden_gems_v2.png"

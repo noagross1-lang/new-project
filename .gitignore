@@ -1,3 +1,9 @@
 data/reviews.csv
 data/reviews_cleaned_2025.csv
 data/reviews_cleaned_2025_sentiment.csv
+
+__pycache__/
+*.pyc
+
+# Word lock files
+~$*

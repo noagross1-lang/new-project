@@ -23,7 +23,9 @@ nltk.download("averaged_perceptron_tagger_eng")
 | --- | --- |
 | `listings.csv` | Full Inside Airbnb export — one row per listing, 79 columns |
 | `reviews.csv` | One row per review |
-| `neighbourhoods.csv` | The 15 Rome *municipi* |
+
+Neighbourhoods come from the `neighbourhood_cleansed` column of `listings.csv`
+(15 Rome *municipi*, no missing values), not from a separate file.
 
 ## Pipeline
 
@@ -36,16 +38,19 @@ python compute_sentiment.py       # -> data/reviews_cleaned_2025_sentiment.csv  
 python compute_positive_rate.py   # -> data/listing_positive_rate.csv
 python compute_hidden_flag.py     # -> data/listing_hidden_flag.csv
 python train_decision_tree.py     # -> data/listings_model_predictions.csv, models/*.joblib
+                                  #    also prints the RMSE / MAE / MAPE table
 python find_hidden_gems.py        # -> data/hidden_gems.csv
-python compute_metrics.py         # prints model error metrics
 
 cd clustering
-python build_clusters.py          # -> cluster_assignments_k*.csv, scatter_k*.png
-python plot_maps.py               # -> map_k3.png, map_k4.png
+python build_clusters.py          # -> cluster_assignments_k*.csv, elbow_*.png,
+                                  #    external_validation_k4.csv, final_cluster_profile_k4.csv
 cd ..
 
-python build_wordclouds.py        # -> data/wordcloud_*.png, data/wordcloud_phrases_*.csv
+python build_wordclouds.py        # -> data/wordcloud_*_v2.png, data/wordcloud_phrases_*_v2.csv
 ```
+
+The write-up figures are built from `docs/assets/make_*.py`, each run from the
+`docs/assets/` directory.
 
 `clean_listings.py` reads `data/reviews_cleaned_2025.csv` to keep only listings
 reviewed in 2025, so `clean_reviews.py` must have been run at least once before it.
@@ -73,6 +78,9 @@ reviews of Hidden Gems versus all other listings.
 
 ## Report
 
-`docs/writeup.md` is the submission write-up.
-`clustering/clustering_report.md` and `wordcloud_analysis.md` document those two
-stages in more detail.
+`docs/writeup_lastlyupdated08.08.docx` is the submission write-up, and
+`docs/writeup_lastlyupdated08.08_no_photos_no_graphs.docx` is the same document
+without the figures. Both are edited directly in Word.
+
+`docs/writeup.md` plus `docs/build_docx.py` are the older Markdown-to-Word
+pipeline, still in use for drafting; run `python build_docx.py` from `docs/`.
