@@ -17,6 +17,14 @@ REVIEWS_PATH = "data/reviews_cleaned_2025.csv"
 HIDDEN_GEMS_PATH = "data/hidden_gems.csv"
 TEXT_COLUMN = "comments_clean"
 
+# v2 outputs: kept separate from the original wordcloud_*.png / wordcloud_phrases_*.csv
+# on purpose, so this rerun (2-3 word adj+noun phrases instead of adj+noun bigrams
+# only) does not change the assets the existing writeup.md/writeup.docx embed.
+PHRASES_HIDDEN_CSV = "data/wordcloud_phrases_hidden_gems_v2.csv"
+PHRASES_OTHER_CSV = "data/wordcloud_phrases_other_listings_v2.csv"
+WORDCLOUD_HIDDEN_PNG = "data/wordcloud_hidden_gems_v2.png"
+WORDCLOUD_OTHER_PNG = "data/wordcloud_other_listings_v2.png"
+
 # Words that are technically nouns/adjectives but carry no descriptive
 # meaning in this domain (every Airbnb review mentions them).
 DOMAIN_NOISE_WORDS = {
@@ -59,16 +67,36 @@ def is_valid_word(word: str) -> bool:
     return bool(WORD_PATTERN.match(word)) and len(word) > 2 and word not in STOPWORDS
 
 
-def extract_adj_noun_phrases(tagged_tokens):
+PHRASE_TAGS = ADJ_TAGS | NOUN_TAGS
+
+
+def extract_phrases(tagged_tokens):
+    """Adjacent 2- or 3-word windows built only from adjective/noun tokens,
+    each containing at least one adjective and at least one noun (e.g.
+    "great location", "great quiet neighborhood"). Every word is lowercased
+    and lemmatized before it is counted, so "Great Location" and "great
+    location" collapse into a single key instead of being counted (and
+    rendered in the cloud) as two different phrases. Spans longer than 3
+    words are never extracted.
+    """
     phrases = []
-    for (word1, tag1), (word2, tag2) in zip(tagged_tokens, tagged_tokens[1:]):
-        if tag1 in ADJ_TAGS and tag2 in NOUN_TAGS:
-            w1, w2 = word1.lower(), word2.lower()
-            if not is_valid_word(w1) or not is_valid_word(w2):
+    n = len(tagged_tokens)
+    for length in (2, 3):
+        for i in range(n - length + 1):
+            window = tagged_tokens[i:i + length]
+            tags = [tag for _, tag in window]
+            if not all(tag in PHRASE_TAGS for tag in tags):
                 continue
-            adj = lemmatizer.lemmatize(w1, pos="a")
-            noun = lemmatizer.lemmatize(w2, pos="n")
-            phrases.append(f"{adj} {noun}")
+            if not (any(tag in ADJ_TAGS for tag in tags) and any(tag in NOUN_TAGS for tag in tags)):
+                continue
+            words = [word.lower() for word, _ in window]
+            if not all(is_valid_word(w) for w in words):
+                continue
+            lemmas = [
+                lemmatizer.lemmatize(w, pos="a" if tag in ADJ_TAGS else "n")
+                for w, tag in zip(words, tags)
+            ]
+            phrases.append(" ".join(lemmas))
     return phrases
 
 
@@ -80,7 +108,7 @@ def build_phrase_counts(texts, batch_size=20000):
         tokenized = [TOKEN_PATTERN.findall(t) for t in batch]
         tagged_batch = pos_tag_sents(tokenized)
         for tagged in tagged_batch:
-            counter.update(extract_adj_noun_phrases(tagged))
+            counter.update(extract_phrases(tagged))
         print(f"  processed {min(start + batch_size, len(texts))}/{len(texts)} reviews")
     return counter
 
@@ -144,36 +172,36 @@ def main():
 
     print("Processing hidden gem reviews...")
     hidden_phrases = build_phrase_counts(hidden_texts)
-    print(f"Unique adj+noun phrases (hidden gems): {len(hidden_phrases)}")
+    print(f"Unique phrases (hidden gems): {len(hidden_phrases)}")
 
     print("Processing other listings' reviews...")
     other_phrases = build_phrase_counts(other_texts)
-    print(f"Unique adj+noun phrases (other listings): {len(other_phrases)}")
+    print(f"Unique phrases (other listings): {len(other_phrases)}")
 
-    pd.DataFrame(hidden_phrases.most_common(50), columns=["phrase", "count"]).to_csv(
-        "data/wordcloud_phrases_hidden_gems.csv", index=False
+    pd.DataFrame(hidden_phrases.most_common(10), columns=["phrase", "count"]).to_csv(
+        PHRASES_HIDDEN_CSV, index=False
     )
-    pd.DataFrame(other_phrases.most_common(50), columns=["phrase", "count"]).to_csv(
-        "data/wordcloud_phrases_other_listings.csv", index=False
+    pd.DataFrame(other_phrases.most_common(10), columns=["phrase", "count"]).to_csv(
+        PHRASES_OTHER_CSV, index=False
     )
 
     make_wordcloud(
         hidden_phrases,
         "Hidden Gems - Adjective + Noun Phrases",
-        "data/wordcloud_hidden_gems.png",
+        WORDCLOUD_HIDDEN_PNG,
     )
     make_wordcloud(
         other_phrases,
         "Other Listings - Adjective + Noun Phrases",
-        "data/wordcloud_other_listings.png",
+        WORDCLOUD_OTHER_PNG,
     )
 
-    print("\nTop 20 phrases - Hidden Gems:")
-    for phrase, count in hidden_phrases.most_common(20):
+    print("\nTop 10 phrases - Hidden Gems:")
+    for phrase, count in hidden_phrases.most_common(10):
         print(f"  {phrase}: {count}")
 
-    print("\nTop 20 phrases - Other Listings:")
-    for phrase, count in other_phrases.most_common(20):
+    print("\nTop 10 phrases - Other Listings:")
+    for phrase, count in other_phrases.most_common(10):
         print(f"  {phrase}: {count}")
 
 
